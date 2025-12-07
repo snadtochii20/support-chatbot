@@ -19,21 +19,16 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h1 class="h4 mb-0">Чатбот</h1>
         <div class="d-flex gap-2">
-          <button
-            id="themeToggleBtn"
-            class="btn btn-outline-secondary btn-sm"
-            title="Перемкнути тему"
-          >
-            🌙
-          </button>
-          <button id="logoutBtn" class="btn btn-outline-danger btn-sm">
-            Вийти
-          </button>
+        
         </div>
       </div>
 
       <!-- Сюди будуть додаватися повідомлення -->
       <div id="messages" class="card-body messages bg-light"></div>
+      <div id="typing" style="font-style: italic; color: gray; display: none;">
+  AI typing...
+</div>
+
 
       <div class="card-footer">
         <div class="input-group">
@@ -49,26 +44,132 @@
     </div>
   </div>
 
-  <!-- Firebase (App + Firestore) -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+ <!-- Firebase (App + Firestore) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <script>
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhn_Q75qlfZo8wGWOx5lSrS2Afutpyb4U",
-  authDomain: "chatbot-openai-90886.firebaseapp.com",
-  projectId: "chatbot-openai-90886",
-  storageBucket: "chatbot-openai-90886.firebasestorage.app",
-  messagingSenderId: "1003909501424",
-  appId: "1:1003909501424:web:9c4ce66741afb57de88d35"
-    };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
+<script>
+  // ===== Firebase конфіг (ПІДСТАВ СВОЇ ДАНІ) =====
+  const firebaseConfig = {
+     apiKey: "AIzaSyAbOH_0LgvDcgyAY39FFGjDdGdLeGhL_Y0",
+  authDomain: "support-chatbot-dea3d.firebaseapp.com",
+  projectId: "support-chatbot-dea3d",
+  storageBucket: "support-chatbot-dea3d.firebasestorage.app",
+  messagingSenderId: "495512902836",
+  appId: "1:495512902836:web:b270f82bbdf50d3e4e0be1",
+  measurementId: "G-5C2PV3KM1G"
+  };
+  const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  <!-- Наш скрипт чату (працює вже після Firebase) -->
-  <script src="chat.js"></script>
+ 
+
+  // ===== Допоміжні змінні =====
+  const messagesDiv = document.getElementById("messages");
+  const input = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  // айді користувача (якщо є auth — бери з localStorage)
+  const userId = localStorage.getItem("userId") || "anonymous";
+
+  // ===== Функції для чату =====
+  function addMessage(author, text, saveToDb = true) {
+    const msg = document.createElement("div");
+    msg.classList.add("mb-2");
+    msg.innerHTML = `<strong>${author}:</strong> ${text}`;
+    messagesDiv.appendChild(msg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Збереження в Firestore (якщо потрібно)
+    if (saveToDb) {
+      db.collection("messages").add({
+        userId,
+        author,
+        text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  }
+
+  let typingEl = null;
+
+  function showTyping() {
+    if (typingEl) return;
+    typingEl = document.createElement("div");
+    typingEl.classList.add("fst-italic", "text-muted", "mt-1");
+    typingEl.textContent = "AI друкує...";
+    messagesDiv.appendChild(typingEl);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function hideTyping() {
+    if (!typingEl) return;
+    typingEl.remove();
+    typingEl = null;
+  }
+
+  // ===== Надсилання повідомлення =====
+  async function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Показуємо наше повідомлення
+    addMessage("You", message);
+    input.value = "";
+
+    // Показуємо "AI друкує..."
+    showTyping();
+
+    try {
+      const response = await fetch("http://localhost:3000/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+
+      hideTyping();
+      addMessage("AI", data.reply);
+    } catch (err) {
+      hideTyping();
+      addMessage("AI", "Сталася помилка при зверненні до сервера 😢");
+      console.error(err);
+    }
+  }
+
+  // ===== Завантаження історії при відкритті сторінки =====
+  async function loadHistory() {
+    const snapshot = await db.collection("messages")
+      .where("userId", "==", userId)
+      .orderBy("createdAt")
+      .get();
+
+    snapshot.forEach(doc => {
+      const m = doc.data();
+      // saveToDb = false, щоб не дублювати в базі
+      addMessage(m.author, m.text, false);
+    });
+  }
+
+  // Клік по кнопці
+  sendBtn.addEventListener("click", sendMessage);
+
+  // Відправка по Enter
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Старт: завантажити історію
+  loadHistory();
+</script>
+<!-- Старий скрипт WebSocket більше НЕ підключаємо -->
+<!-- <script src="chat.js"></script> -->
 </body>
 </html>
