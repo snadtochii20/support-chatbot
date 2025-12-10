@@ -1,11 +1,8 @@
+// backend/db.js
 const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
 
-// шлях до файлу бази даних (chat.db буде лежати поруч із db.js)
-const dbPath = path.join(__dirname, 'chat.db');
-const db = new sqlite3.Database(dbPath);
+const db = new sqlite3.Database('./chat.db');
 
-// створюємо таблиці, якщо їх ще немає
 db.serialize(() => {
   // Таблиця користувачів
   db.run(`
@@ -23,11 +20,9 @@ db.serialize(() => {
       user_id INTEGER NOT NULL,
       role TEXT NOT NULL,
       content TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY(user_id) REFERENCES users(id)
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 });
 
 module.exports = db;
-

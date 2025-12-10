@@ -1,140 +1,106 @@
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-/* Картка авторизації */
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-}
-
-/* Картка чату */
-.chat-card {
-  max-width: 800px;
-  margin: 0 auto;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Блок з повідомленнями */
-.messages {
-  flex: 1;
+/* Таблиця історії */
+.history-wrapper {
+  max-height: 500px;
   overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
-/* Рядок повідомлення */
-.message-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  margin-bottom: 8px;
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
 }
 
-.message-row.user {
-  justify-content: flex-end;
+.history-table th {
+  position: sticky;
+  top: 0;
+  background: #f4f4f4;
+  padding: 8px;
+  border-bottom: 2px solid #ccc;
 }
 
-.message-row.assistant {
-  justify-content: flex-start;
+.history-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+  word-break: break-word;
 }
 
-/* Аватарки */
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
+.history-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Хто писав */
+.user {
+  color: #1a73e8;
+  font-weight: bold;
+}
+
+.ai {
+  color: #188038;
+  font-weight: bold;
+}
+
+/* Чат зліва */
+.chat-box {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  background: white;
+  padding: 10px;
+  border-radius: 6px;
+}
+/* ===== ІСТОРІЯ В ТАБЛИЦІ ===== */
+
+.history-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: 0.9rem;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f1f1;
+  vertical-align: top;
+}
+
+/* "прилипла" шапка таблиці при скролі */
+.history-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 1;
+}
+
+/* зебра-рядки */
+.history-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Хто: ви / AI */
+.history-who.user {
+  color: #198754; /* зелений */
   font-weight: 600;
-  color: #fff;
 }
 
-.avatar-user {
-  background: #0d6efd;
+.history-who.ai {
+  color: #0d6efd; /* синій */
+  font-weight: 600;
 }
 
-.avatar-assistant {
-  background: #6c757d;
+/* довгі повідомлення переносяться */
+.history-text {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
-/* Бабли повідомлень */
-.message {
-  max-width: 80%;
-  padding: 8px 12px;
-  border-radius: 16px;
-  font-size: 0.95rem;
-}
-
-.message.user {
-  background: #0d6efd;
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-
-.message.assistant {
-  background: #e9ecef;
-  color: #212529;
-  border-bottom-left-radius: 4px;
-}
-
-/* Тайпінг-індикатор */
-.message.typing {
-  display: inline-flex;
-  gap: 4px;
-}
-
-.message.typing .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #6c757d;
-  display: inline-block;
-  animation: blink 1s infinite;
-}
-
-.message.typing .dot:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.message.typing .dot:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-@keyframes blink {
-  0%, 20% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
-}
-
-/* Темна тема */
-body.dark-theme {
-  background-color: #121212 !important;
-  color: #f8f9fa;
-}
-
-body.dark-theme .chat-card {
-  background-color: #1e1e1e;
-  color: #f8f9fa;
-}
-
-body.dark-theme .card-header,
-body.dark-theme .card-footer {
-  background-color: #1e1e1e;
-  border-color: #333;
-}
-
-body.dark-theme .messages {
-  background-color: #181818;
-}
-
-body.dark-theme .message.assistant {
-  background: #343a40;
-  color: #f8f9fa;
-}
-
-body.dark-theme .avatar-assistant {
-  background: #495057;
-}

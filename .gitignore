@@ -138,3 +138,7 @@ dist
 
 # Local database
 backend/chat.db
+node_modules/
+*.db
+.env
+frontend/firebase.js

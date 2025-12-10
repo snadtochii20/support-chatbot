@@ -1,3 +1,4 @@
+// frontend/auth.js
 const API_BASE = 'http://localhost:3000';
 
 const emailInput = document.getElementById('email');
@@ -31,7 +32,7 @@ async function sendAuth(path) {
       return;
     }
 
-    // зберігаємо userId і переходимо до чату
+    // зберігаємо userId і йдемо в чат
     localStorage.setItem('userId', data.userId);
     window.location.href = 'chat.html';
   } catch (err) {
